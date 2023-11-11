@@ -18,6 +18,7 @@ import androidx.navigation.navArgument
 import com.occiandiaali.diidi.navigation.CourseScreens
 import com.occiandiaali.diidi.ui.screens.homeScreen.DetailScreen
 import com.occiandiaali.diidi.ui.screens.homeScreen.HomeScreen
+import com.occiandiaali.diidi.ui.screens.homeScreen.MainScreen
 import com.occiandiaali.diidi.ui.theme.DiidiTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +37,8 @@ class MainActivity : ComponentActivity() {
 //        }
         setContent {
             DiidiTheme {
-                AppNavigation()
+               // AppNavigation()
+                MainScreen()
             }
         }
     }

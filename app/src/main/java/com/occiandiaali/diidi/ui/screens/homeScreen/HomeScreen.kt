@@ -2,6 +2,7 @@ package com.occiandiaali.diidi.ui.screens.homeScreen
 
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -89,14 +90,16 @@ fun MainContent(
         verticalItemSpacing = 4.dp,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         content = {
-            items(images) { image ->
+            items(items = images) {image ->
                 AsyncImage(
                     model = image,
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight())
+                        .wrapContentHeight()
+                        .clickable { navController.navigate(route = CourseScreens.DetailScreen.name + "/${image}") }
+                )
             }
         }, modifier = Modifier.fillMaxSize())
 

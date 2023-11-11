@@ -42,7 +42,11 @@ import java.time.format.TextStyle
 @Composable
 fun DetailScreen(navController: NavController, courseId: String?) {
     val newCourseList = getCourses().filter { course -> course.id == courseId }
-    Scaffold {
+    Scaffold(topBar = {
+        TopAppBar(title = { /*TODO*/ },
+            navigationIcon = {Icon(Icons.Default.ArrowBack, "Arrow")},
+            modifier = Modifier.clickable { navController.popBackStack() })
+    }) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
