@@ -6,15 +6,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Email
@@ -24,11 +30,13 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,19 +54,23 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.occiandiaali.diidi.R
+import com.occiandiaali.diidi.navigation.CourseScreens
 
 
 class Photo(
@@ -98,7 +110,19 @@ fun MainScreen() {
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {}
+        topBar = {
+            TopAppBar(title = { Text("Diidi") },
+                colors =
+                    TopAppBarDefaults.smallTopAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
+                actions = {
+                    FilledTonalIconButton(onClick = { Toast.makeText(mCtx, "Open options", Toast.LENGTH_SHORT).show() }) {
+            Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+        }
+                }
+                )
+        }
     ) {
        // Column(modifier = Modifier.fillMaxSize()) {}
         PosterGrid(listings)
@@ -110,14 +134,29 @@ fun PosterGrid(posters: List<Photo>) {
     var activePhotoId by rememberSaveable {
         mutableStateOf<Int?>(null)
     }
-    LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)) {
-        items(posters, {it.id}) {poster ->
-            ImageItem(
+//    LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)) {
+//        items(posters, {it.id}) {poster ->
+//            ImageItem(
+//                poster,
+//                Modifier.clickable { activePhotoId = poster.id }
+//            )
+//        }
+//    }
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(150.dp),
+        verticalItemSpacing = 4.dp,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        content = {
+            items(posters, {it.id}) {poster ->
+                ImageItem(
                 poster,
-                Modifier.clickable { activePhotoId = poster.id }
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clickable { activePhotoId = poster.id }
             )
-        }
-    }
+            }
+        }, modifier = Modifier.fillMaxSize())
     if (activePhotoId != null) {
         FullScreenImage(
             poster = posters.first { it.id == activePhotoId },
