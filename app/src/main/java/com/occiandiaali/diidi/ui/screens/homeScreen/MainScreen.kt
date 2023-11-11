@@ -39,6 +39,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -104,6 +105,9 @@ fun rememberRandomSampleImageUrl(
 @Composable
 fun MainScreen() {
     val mCtx = LocalContext.current
+    var expanded by remember { mutableStateOf(false)}
+    val ddItems = listOf("Notes", "Gallery", "Account", "Sign Out")
+    var selectedIdx by remember {mutableIntStateOf(0)}
     val listings = List(50) {
         val url = rememberRandomSampleImageUrl(width = 256)
         Photo(it, url, url.replace("256", "1024"))
@@ -116,9 +120,26 @@ fun MainScreen() {
                     TopAppBarDefaults.smallTopAppBarColors(
                         containerColor = Color.Transparent
                     ),
+                // Toast.makeText(mCtx, "Open options", Toast.LENGTH_SHORT).show()
                 actions = {
-                    FilledTonalIconButton(onClick = { Toast.makeText(mCtx, "Open options", Toast.LENGTH_SHORT).show() }) {
+                    FilledTonalIconButton(onClick = { expanded = true }) {
             Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier
+                                .background(Color.LightGray)
+                            ) {
+                            ddItems.forEachIndexed { index, s ->
+                                DropdownMenuItem(
+                                    text = { Text(text = s) },
+                                    onClick = {
+                                        selectedIdx = index
+                                        expanded = false
+                                        Toast.makeText(mCtx, "Selected: $s", Toast.LENGTH_SHORT).show()
+                                    })
+                            }
+                        }
         }
                 }
                 )
@@ -150,10 +171,10 @@ fun PosterGrid(posters: List<Photo>) {
             items(posters, {it.id}) {poster ->
                 ImageItem(
                 poster,
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clickable { activePhotoId = poster.id }
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .clickable { activePhotoId = poster.id }
             )
             }
         }, modifier = Modifier.fillMaxSize())
